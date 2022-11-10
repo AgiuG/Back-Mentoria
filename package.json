@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/index.js",
+    "local": "nodemon server/index.js",
     "test": "jest --forceExit --maxWorkers=1 --verbose"
   },
   "keywords": [],
