@@ -15,22 +15,28 @@ steps:
     npm run test
   displayName: 'npm install & test'
 
-- task: CopyFiles@2
+- task: Bash@3
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '*.tgz' 
-    targetFolder: $(Build.ArtifactStagingDirectory)/npm
-  displayName: 'Copy npm package'
+    targetType: 'inline'
+    script: 'which zip'
 
-- task: CopyFiles@2
+- task: PowerShell@2
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: 'package.json' 
-    targetFolder: $(Build.ArtifactStagingDirectory)/npm
-  displayName: 'Copy package.json'   
+    targetType: 'inline'
+    script: |
+      Compress-Archive -Path "$(System.DefaultWorkingDirectory)\*" -DestinationPath "$(Build.ArtifactStagingDirectory)\$(Build.BuildId).zip"
+    pwsh: true
 
-- task: PublishPipelineArtifact@1
+#- task: ArchiveFiles@2
+#  inputs:
+#    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+#    includeRootFolder: false
+#    archiveType: 'zip'
+#    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+#    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/npm'
-    artifactName: npm
-  displayName: 'Publish npm artifact'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
